@@ -6,7 +6,7 @@ from urllib.parse import quote_plus
 from bson.objectid import ObjectId
 from bson.json_util import dumps, loads
 import json
-import config
+import secret
 import pandas as pd
 import datetime
 
@@ -16,7 +16,7 @@ app = Flask(__name__)
 @app.route("/")
 def dashboard_view():
   #initializing Binance client
-  client = Client(config.api_key, config.api_security)
+  client = Client(secret.api_key, secret.api_security)
 
   #making api call to get the data
   info_btcusdt = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_5MINUTE, "1 day ago UTC")
