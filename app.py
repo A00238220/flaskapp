@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from urllib.parse import quote_plus
 from bson.objectid import ObjectId
 from bson.json_util import dumps, loads
-import requests, json
+import json
 import config
 import pandas as pd
 import datetime
