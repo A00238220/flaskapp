@@ -1,0 +1,137 @@
+<html>
+<head>
+     <!-- linking style sheet and connecting to cdn-->
+    <!-- <link rel="shortcut icon" type="image/jpg" href="/static/images/favicon.png"/> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/testing.css">
+    
+    <!-- linking script and connecting to cdn-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js"></script>
+    <script src = "https://use.fontawesome.com/releases/v5.1.0/js/all.js"></script> 
+   
+    <title>Group 5 Cryptocurrency Dashboard</title>
+</head>
+    <body>
+
+        <main class="is-flex is-flex-wrap-no-wrap is-flex-grow-1">
+            <!-- Content -->
+            <div id="contentWrapper" style="background-color:#fafafacc;" class="is-flex-grow-1 p-3">
+                <div id="content">
+
+                <div class="has-text-centered">
+                    <h1 class="title  is-3 pb-5" >Group 5 Cryptocurrency Dashboard</h1>
+                </div>                
+                
+                    <!-- Fits the width of the column -->
+                    <!-- <div class="columns"> -->
+                    <div class="tile is-ancestor">   
+
+                        <div class="tile is-parent">
+                        <div class="tile is-child box notification  is-info has-text-white">
+                            <h1 class="subtitle is-2 has-text-centered has-text-weight-semibold is-size-2">${{ chart_3['btcusdt']|safe }}(USD)</h1>
+                            <h1 class="subtitle has-text-centered has-text-weight-semibold">BTCUSDT Current Trading Price</h1>
+                        </div>
+                        </div>
+            
+                        <div class="tile is-parent">
+                        <div class="tile is-child box notification  is-info has-text-white">
+                            <h1 class="subtitle is-2 has-text-centered has-text-weight-semibold is-size-2">${{ chart_3['ethusdt']|safe}}(USD)</h1>
+                            <h1 class="subtitle has-text-centered has-text-weight-semibold">ETHUSDT Current Trading Price</h1>
+                        </div>
+                        </div>
+            
+                    </div>
+
+
+
+                    <!-- Tiles for graphs -->
+                    <div class="tile is-ancestor"> 
+
+                    <div class="tile is-parent">
+                        <div class="tile is-child box">                                                        
+                        <div id="kpi-1"></div> 
+                        </div>                   
+                        </div>
+
+                    
+                    <div class="tile is-parent">
+                        <div class="tile is-child box">                                                       
+                        <div id="kpi-2"></div>
+                        </div>
+                        </div>
+            
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+
+    <!-- Creating the KPI Graphs -->
+    <script>
+        var data = [
+        {
+            x: {{ chart_1['x']|safe }},
+            y: {{ chart_1['y']|safe }},
+          type: 'scatter'
+        }
+      ];
+
+      var layout = {
+        title: 'BTCUSDT Historical Kline Chart (1-Day Range, 5 Minutes Interval) ',
+        xaxis: {
+          autotick: true,
+          zeroline: true,
+          autorange: true,
+          title: 'Time (UTC)',
+          type: 'date'
+        },
+        yaxis: {
+          autotick: true,
+          zeroline: true,
+          autorange: true,
+          title: 'Price (USD)',
+          type: 'linear'
+        }
+      };
+      
+      Plotly.newPlot('kpi-1', data, layout);
+      
+    </script>
+
+    <script>
+        // KPI-2
+
+        var data = [
+        {   
+            x: {{ chart_2['x']|safe }},
+            y: {{ chart_2['y']|safe }},
+            type: 'scatter'
+        }
+        ];
+
+        var layout = {
+            title: 'ETHUSDT Historical Kline Chart (1-Day Range, 5 Minutes Interval) ',
+            xaxis: {
+                autotick: true,
+                zeroline: true,
+                autorange: true,
+                title: 'Time (UTC)',
+                type: 'date'
+            },
+            yaxis: {
+                autotick: true,
+                zeroline: true,
+                autorange: true,
+                title: 'Price (USD)',
+                type: 'linear'
+            }
+          };
+
+        Plotly.newPlot('kpi-2', data, layout)
+    </script>
+
+    </body>
+</html>
