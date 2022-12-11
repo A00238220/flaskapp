@@ -5,13 +5,27 @@ from pymongo import MongoClient
 from urllib.parse import quote_plus
 from bson.objectid import ObjectId
 from bson.json_util import dumps, loads
+from flask_apscheduler import APScheduler
 import json
 import secret
 import pandas as pd
 import datetime
+import time
+import schedule
+
 
 #initializing flask app
 app = Flask(__name__)
+
+#initializing scheduler
+scheduler = APScheduler()
+
+#defining a function to run the scheduler
+def job_function():
+  print("scheduler is running!")
+scheduler.add_job(id='job_function', func=job_function, trigger='interval', seconds=20)
+scheduler.start()
+
 
 @app.route("/")
 def dashboard_view():
