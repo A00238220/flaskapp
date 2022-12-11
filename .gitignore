@@ -1,9 +1,9 @@
-allprices.json
-btcusdt.json
-crypto dashboard.PNG
-ethusdt.json
-requirements.txt
-run_server.bat
-venv
-__pycache__
-secret.py
+/allprices.json
+/btcusdt.json
+/crypto dashboard.PNG
+/ethusdt.json
+/requirements.txt
+/run_server.bat
+/venv
+/__pycache__
+/config.py
