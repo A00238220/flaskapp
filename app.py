@@ -21,8 +21,8 @@ scheduler = APScheduler()
 #defining a function to run the scheduler
 def job_function():
   print("scheduler is running!")
-scheduler.add_job(id='job_function', func=job_function, trigger='interval', seconds=30)
-# scheduler.start()
+scheduler.add_job(id='job_function', func=job_function, trigger='interval', seconds=10)
+scheduler.start()
 
 
 @app.route("/")
