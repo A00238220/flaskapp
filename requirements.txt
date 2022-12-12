@@ -4,3 +4,4 @@ Flask_APScheduler==1.12.4
 pandas==1.5.2
 pymongo==4.3.3
 python_binance==1.0.16
+gunicorn
