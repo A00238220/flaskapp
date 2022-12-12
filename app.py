@@ -34,6 +34,7 @@ def dashboard_view():
   info_btcusdt = client.get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_5MINUTE, "1 day ago UTC")
   info_ethusdt = client.get_historical_klines("ETHUSDT", Client.KLINE_INTERVAL_5MINUTE, "1 day ago UTC")
   info_allprices = client.get_all_tickers()
+  print(info_allprices)
 
   #converting BTCUSDT data into a pandas dataframe
   df_btcusdt = pd.DataFrame(info_btcusdt, columns=['openTime', 'open', 'high', 'low', 'close', 'volume', 'closeTime', 'quoteAssetVolume', 'numberOfTrades', 'takerBuyBaseVol', 'takerBuyQuoteVol', 'ignore'])
@@ -43,6 +44,7 @@ def dashboard_view():
 
   #converting allprices into a pandas dataframe
   df_allprices = pd.DataFrame(info_allprices, columns=['symbol', 'price'])
+  
 
   #converting dataframes into a json string type
   json_str_btcusdt = df_btcusdt.to_json()
