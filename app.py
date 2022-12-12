@@ -10,8 +10,6 @@ import json
 import secret
 import pandas as pd
 import datetime
-import time
-import schedule
 
 
 #initializing flask app
@@ -23,8 +21,8 @@ scheduler = APScheduler()
 #defining a function to run the scheduler
 def job_function():
   print("scheduler is running!")
-scheduler.add_job(id='job_function', func=job_function, trigger='interval', seconds=20)
-scheduler.start()
+scheduler.add_job(id='job_function', func=job_function, trigger='interval', seconds=30)
+# scheduler.start()
 
 
 @app.route("/")
@@ -43,13 +41,18 @@ def dashboard_view():
   #converting ETHUSDT data into a pandas dataframe
   df_ethusdt = pd.DataFrame(info_ethusdt, columns=['openTime', 'open', 'high', 'low', 'close', 'volume', 'closeTime', 'quoteAssetVolume', 'numberOfTrades', 'takerBuyBaseVol', 'takerBuyQuoteVol', 'ignore'])
 
+  #converting allprices into a pandas dataframe
+  df_allprices = pd.DataFrame(info_allprices, columns=['symbol', 'price'])
+
   #converting dataframes into a json string type
   json_str_btcusdt = df_btcusdt.to_json()
   json_str_ethusdt = df_ethusdt.to_json()
+  json_str_allprices = df_allprices.to_json()
 
   #converting json string to json object
   json_obj_btcusdt = json.loads(json_str_btcusdt)
   json_obj_ethusdt = json.loads(json_str_ethusdt)
+  json_obj_allprices = json.loads(json_str_allprices)
 
   #establishing connection with the database
   client = MongoClient("mongodb+srv://group5members:1234@cluster0.egqrypy.mongodb.net/?retryWrites=true&w=majority")
@@ -62,26 +65,32 @@ def dashboard_view():
   #creating a collections
   btcusdt_collection = db["btcusdt_collection"]
   ethusdt_collection = db["ethusdt_collection"]
+  allprices_collection = db["allprices_collection"]
 
   #deleting collections to avoid duplication of data
   btcusdt_collection.delete_many({})
   ethusdt_collection.delete_many  ({})
+  allprices_collection.delete_many({})
 
   #inserting data into the collection (uncomment to insert data once and comment out after inserting)
   btcusdt_collection.insert_one({"_id": 0, "data": json_obj_btcusdt})
-  ethusdt_collection.insert_one({"_id": 1, "data": json_obj_ethusdt})  
+  ethusdt_collection.insert_one({"_id": 1, "data": json_obj_ethusdt})
+  allprices_collection.insert_one({"_id": 2, "data": json_obj_allprices})  
 
   #reading data from the collection
   btcusdt_data = db['btcusdt_collection'].find()
   ethusdt_data = db['ethusdt_collection'].find()
+  allprices_data = db['allprices_collection'].find()
 
   #creating cursor and converting data from the collection into a list
   btcusdt_list = list(btcusdt_data)
   ethusdt_list = list(ethusdt_data)
+  allprices_list = list(allprices_data)
 
   #conveting to json
   btcusdt_json = dumps(btcusdt_list, indent = 3)
   ethusdt_json = dumps(ethusdt_list, indent = 3)
+  allprices_json = dumps(allprices_list, indent = 3)
 
   #dumping data into a json File for readability
   filename = "btcusdt.json"
@@ -92,21 +101,9 @@ def dashboard_view():
   with open(filename, 'w') as fobj:
     fobj.write(ethusdt_json)
 
-  #creating a list to store the current price of BTC and ETH
-  crypto_curr_price = []
-  crypto_pairs = ['BTCUSDT', 'ETHUSDT']
-
-  #extracting the current price of BTC and ETH
-  for i in range(len(info_allprices)):
-    if info_allprices[i]['symbol'] in crypto_pairs:
-      if info_allprices[i]['symbol'] == 'BTCUSDT':
-        crypto_curr_price.append(float(info_allprices[i]['price']))
-      elif info_allprices[i]['symbol'] == 'ETHUSDT':
-        crypto_curr_price.append(float(info_allprices[i]['price']))
-
-  #creating a list to store opening time and prices of BTCUSDT and ETHUSDT
-  btcusdt_open_time, btcusdt_open_prices, ethusdt_open_time, ethusdt_open_prices = [], [], [], []
-  attributes = ['openTime', 'open']
+  filename = "allprices.json"
+  with open(filename, 'w') as fobj:
+    fobj.write(allprices_json)
 
   #loading json for btcusdt and ethusdt from data dump
   filename = 'btcusdt.json'
@@ -117,7 +114,21 @@ def dashboard_view():
   with open(filename) as fobj:
     ethusdt = json.load(fobj)
 
-  #extracting the opening time and prices of BTCUSDT and ETHUSDT
+  filename = 'allprices.json'
+  with open(filename) as fobj:
+    allprices = json.load(fobj)
+
+  #creating a list to store opening time and prices of BTCUSDT and ETHUSDT
+  crypto_curr_price, btcusdt_open_time, btcusdt_open_prices, ethusdt_open_time, ethusdt_open_prices = [], [], [], [], []
+  attributes = ['openTime', 'open']
+  
+  #extracting the current price, opening time and prices of BTCUSDT and ETHUSDT
+  for i in range(len(allprices)):
+    crypto_curr_price.append(float(allprices[i]['data']['price']['11']))
+    crypto_curr_price.append(float(allprices[i]['data']['price']['12']))
+  
+  print(crypto_curr_price)
+
   for i in range(len(btcusdt)):
     btcusdt_open_time.append(btcusdt[i]['data']['openTime'])
     btcusdt_open_prices.append(btcusdt[i]['data']['open'])
